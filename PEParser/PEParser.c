@@ -241,7 +241,7 @@ void print_pe_info(PEInfo peInfo, int fileType) {
 	printf("\tAddressOfEntryPoint: 0x%X\n", peInfo.OPTIONAL_HEADER_ADDRESSOF_ENTRY_POINT);
 	printf("\tBaseOfCode: 0x%X\n", peInfo.OPTIONAL_HEADER_BASEOF_CODE);
 	if (fileType == 64) {
-		printf("\tImageBase: 0x%X\n", peInfo.OPTIONAL_HEADER_IMAGE_BASE64);
+		printf("\tImageBase: 0x%lld\n", peInfo.OPTIONAL_HEADER_IMAGE_BASE64);
 	}
 	else if (fileType == 32) {
 		printf("\tImageBase: 0x%X\n", peInfo.OPTIONAL_HEADER_IMAGE_BASE);
