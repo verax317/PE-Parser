@@ -158,6 +158,27 @@ PEInfo parse_pe_file64(FILE* fp) {
 	peInfo.DELAY_IMPORT_DIRECTORY = NT_HEADERS.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_DELAY_IMPORT];
 	peInfo.COM_DESCRIPTOR_DIRECTORY = NT_HEADERS.OptionalHeader.DataDirectory[IMAGE_DIRECTORY_ENTRY_COM_DESCRIPTOR];
 
+	// Aloca memória para ler os section headers
+	IMAGE_SECTION_HEADER* SECTION_HEADERS = (IMAGE_SECTION_HEADER*) malloc(peInfo.FILE_HEADER_NUMBEROF_SECTIONS * sizeof(IMAGE_SECTION_HEADER));
+	
+	// Itera de 0 até o número de seções
+	for (int i = 0; i < peInfo.FILE_HEADER_NUMBEROF_SECTIONS; i++) {
+		int offset = peInfo.DOS_HEADER_LFANEW + sizeof(IMAGE_NT_HEADERS64) + (IMAGE_SIZEOF_SECTION_HEADER * i);
+		fseek(fp, offset, SEEK_SET);
+		fread(&SECTION_HEADERS[i], IMAGE_SIZEOF_SECTION_HEADER, 1, fp);
+		printf("* %.8s:\n", SECTION_HEADERS[i].Name);
+		printf("\tVirtualAddress: 0x%X\n", SECTION_HEADERS[i].VirtualAddress);
+		printf("\tVirtualSize: 0x%X\n", SECTION_HEADERS[i].Misc.VirtualSize);
+		printf("\tPointerToRawData: 0x%X\n", SECTION_HEADERS[i].PointerToRawData);
+		printf("\tSizeOfRawData: 0x%X\n", SECTION_HEADERS[i].SizeOfRawData);
+		printf("\tCharacteristics: 0x%X\n\n", SECTION_HEADERS[i].Characteristics);
+	}
+	
+	free(SECTION_HEADERS); // Libera a memória
+	SECTION_HEADERS = NULL; // Previne dangling pointers
+
+	
+
 
 	return peInfo;
 }
@@ -311,6 +332,7 @@ void print_pe_info(PEInfo peInfo, int fileType) {
 	printf("\tCOM Descriptor Directory\n");
 	printf("\t\tRVA: 0x%X\n", peInfo.COM_DESCRIPTOR_DIRECTORY.VirtualAddress);
 	printf("\t\tSize: 0x%X\n", peInfo.COM_DESCRIPTOR_DIRECTORY.Size);
+
 
 
 }
